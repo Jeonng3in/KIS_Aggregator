@@ -1,4 +1,4 @@
-<!-- D사 CB 인수인 정보 집계 시스템 (prototype) -->
+<!-- 투자자 정보 취합 시스템 -->
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
 <style>
   :root {
@@ -185,7 +185,21 @@
   table.final tr.b0 td.merge { background:#eef2f9; }
   table.final tr.b1 td.merge { background:#d8e3f3; }
   table.final tr.b1 td.grp.bad, table.final tr.b0 td.grp.bad { background:#fdecea; }
+  table.final tr.mgr0 td { background:#f8fafc; }
+  table.final tr.mgr0 td.merge { background:#edf2f7; }
+  table.final tr.mgr1 td { background:#eaf3ff; }
+  table.final tr.mgr1 td.merge { background:#dce9f8; }
+  table.final tr.mgr2 td { background:#edf7f0; }
+  table.final tr.mgr2 td.merge { background:#dcecdf; }
+  table.final tr.mgr3 td { background:#fff7df; }
+  table.final tr.mgr3 td.merge { background:#f4eacb; }
+  table.final tr.mgr4 td { background:#f4effa; }
+  table.final tr.mgr4 td.merge { background:#e7def2; }
+  table.final tr.mgr5 td { background:#fceff1; }
+  table.final tr.mgr5 td.merge { background:#f2dfe3; }
+  table.final tr[class*="mgr"] td.grp.bad { background:#fdecea; }
   table.final tr.grpTop td { border-top:2px solid #9bb0d4; }
+  table.final tr.mgrStart td { border-top:3px solid #506d9b; }
   table.final tr.sum td { background:#fffbe6; font-weight:800; color:var(--navy); border-top:2px solid var(--navy); }
   table.final input.tu {
     width:130px; padding:4px 6px; font-family:inherit; font-size:12px; text-align:right;
@@ -196,17 +210,104 @@
   .note { font-size:12px; color:var(--ink-soft); line-height:1.6; margin-top:14px; padding:12px 14px; background:#f7f8fa; border:1px solid var(--line-soft); border-radius:8px; letter-spacing:-.1px;}
   .note b { color: var(--navy); }
   .storage-warn { background:#e3f2fd; border:1px solid #90caf9; color:#0d47a1; font-size:12.5px; padding:10px 14px; border-radius:8px; margin-bottom:16px; font-weight:600;}
+  .storage-warn.secure { background:#e8f5ee; border-color:#9fd3b4; color:#125c37; }
+  .storage-warn.err { background:#fdecea; border-color:#efb7ae; color:#8a2a1f; }
+  .access-card {
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px; box-shadow:var(--shadow); margin-bottom:18px;
+  }
+  .access-card h2 { margin:0 0 8px; font-size:17px; color:var(--navy); letter-spacing:-.3px; }
+  .access-card p { margin:0; color:var(--ink-soft); font-size:13px; line-height:1.6; }
+  .admin-login { max-width:520px; }
+  .admin-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .admin-row input {
+    flex:1; min-width:180px; padding:9px 11px; font-family:inherit; font-size:13.5px;
+    background:var(--cream); border:1px solid var(--cream-line); border-radius:7px;
+  }
+  .admin-row input:focus { outline:none; border-color:var(--navy-soft); background:#fff; }
+  .hidden { display:none !important; }
+  .muted { color:var(--ink-soft); }
+  .quota-block {
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fbfcfe;
+    padding:14px;
+    margin-bottom:14px;
+  }
+  .quota-head {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+  }
+  .quota-head .title { font-weight:800; color:var(--navy); font-size:13.5px; }
+  .fund-block {
+    border:1px dashed var(--line);
+    border-radius:7px;
+    background:#fff;
+    padding:12px;
+    margin:10px 0;
+  }
+  .fund-head {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+    color:var(--ink-soft);
+    font-size:12.5px;
+    font-weight:800;
+  }
+  .repeat-editor { display:grid; gap:10px; }
+  .repeat-block {
+    border:1px dashed var(--line);
+    border-radius:7px;
+    background:#fff;
+    padding:12px;
+  }
+  .repeat-head {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+    color:var(--ink-soft);
+    font-size:12.5px;
+    font-weight:800;
+  }
+  .quota-total {
+    font-size:12.5px;
+    color:var(--ink-soft);
+    font-weight:700;
+    margin-left:auto;
+  }
+  .quota-total b { color:var(--navy); }
+  .file-picker {
+    border:1px dashed #aeb9ca;
+    background:#f8fafc;
+    border-radius:8px;
+    padding:16px;
+  }
+  .file-list { margin-top:12px; display:grid; gap:7px; }
+  .file-row {
+    display:flex; align-items:center; gap:10px; min-height:38px;
+    padding:7px 9px; border:1px solid var(--line-soft); background:#fff; border-radius:6px;
+  }
+  .file-row .file-name { flex:1; min-width:0; overflow-wrap:anywhere; font-size:12.5px; font-weight:700; color:var(--navy); }
+  .file-row .file-meta { white-space:nowrap; color:var(--ink-soft); font-size:11.5px; }
+  .upload-status { font-size:12px; color:var(--ink-soft); margin-top:8px; min-height:18px; }
 </style>
  
 <div class="topbar">
   <div class="brand">
-    <div class="mark">KIS</div>
+    <div class="mark">INFO</div>
     <div>
-      <h1>D사 CB 인수인 정보 집계 시스템</h1>
-      <div class="sub">정보회신 자동 집계 · 이사회의사록 첨부표 자동 생성 — prototype</div>
+      <h1>투자자 정보 취합 시스템</h1>
+      <div class="sub">정보회신 자동 취합 · 최종 집계표 생성</div>
     </div>
   </div>
-  <div class="kis"><b>한국투자증권</b> ECM</div>
+  <div class="kis"><b>Investor</b> Response</div>
 </div>
  
 <div class="tabs">
@@ -218,57 +319,41 @@
  
   <!-- ============ INPUT PANEL ============ -->
   <section class="panel active" id="panel-input">
-    <p class="lead">각 인수인(또는 펀드)의 <b>입고계좌 정보 · 통지 정보 · 날인 정보</b>를 입력 후 제출하면 한 곳에 자동 집계됩니다.
-      신탁업자를 통해 투자하는 경우 집합투자업자(운용사)와 신탁업자를 모두 기재해 주세요. (<span style="color:var(--red)">*</span> 표시는 필수)</p>
+    <div class="access-card hidden" id="investorGate">
+      <h2>접근 링크 확인이 필요합니다</h2>
+      <p id="investorGateText">투자자별로 발급된 고유 링크를 통해서만 정보 입력이 가능합니다.</p>
+    </div>
+
+    <p class="lead"><b>쿼터 단위와 쿼터 수</b>를 먼저 입력한 뒤, 해당 쿼터에 포함되는 집합투자기구 정보를 추가해 주세요.
+      여러 쿼터가 배정된 경우 쿼터를 추가하고, 각 쿼터 안에 집합투자기구를 여러 개 입력할 수 있습니다. (<span style="color:var(--red)">*</span> 표시는 필수)</p>
  
     <div class="card">
-      <div class="card-head"><span class="n">1</span> 입고계좌 정보</div>
+      <div class="card-head"><span class="n">1</span> 쿼터 및 집합투자기구 정보</div>
       <div class="card-body">
-        <div class="grid">
-          <div class="field"><label>인수인(또는 펀드명)<span class="req">*</span></label><input id="fundName" placeholder="예: 이현 코스닥벤처 일반 사모증권 투자신탁 제5호"></div>
-          <div class="field"><label>집합투자업자(운용사)</label><input id="assetManager" placeholder="예: 주식회사 이현자산운용"></div>
-          <div class="field"><label>신탁업자명</label><input id="trustee" placeholder="예: 한국투자증권 주식회사"></div>
-          <div class="field"><label>매매금액(인수금액)<span class="req">*</span></label><input id="amount" inputmode="numeric" placeholder="예: 2400000000"><div class="hint live" id="amountHint">금액을 입력하면 한글 표기가 표시됩니다</div></div>
-        </div>
- 
-        <div class="subhead">자기분 / 투자자분</div>
-        <div class="grid">
-          <div class="field"><label>채권입고 증권사</label><input id="bondBroker" placeholder="예: 한국투자증권"></div>
-          <div class="field"><label>증권사 계좌번호</label><input id="brokerAcct" class="mono" placeholder="계좌번호"></div>
-        </div>
- 
-        <div class="subhead">신탁분(펀드)</div>
-        <div class="grid">
-          <div class="field"><label>예탁원 펀드코드</label><input id="ksdCode" class="mono" placeholder="예: 202420A00015"></div>
-          <div class="field"><label>수탁은행 펀드코드</label><input id="custFund" class="mono" placeholder="예: A0151"></div>
-          <div class="field"><label>수탁은행 예탁코드명</label><input id="custDep" class="mono" placeholder="예: 3-0269-03"></div>
-          <div class="field"><label>사업자등록번호(또는 고유번호)</label><input id="bizNo" class="mono" placeholder="예: 290-87-01506"></div>
-          <div class="field full"><label>주소</label><input id="address" placeholder="예: 서울특별시 강남구 테헤란로 10길 8, 녹명빌딩 6층"></div>
+        <div id="quotaEditor"></div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn btn-ghost btn-sm" onclick="addQuota()">쿼터 추가</button>
         </div>
       </div>
     </div>
  
     <div class="card">
-      <div class="card-head"><span class="n">2</span> 인수인에 대한 통지</div>
+      <div class="card-head"><span class="n">2</span> 투자자에 대한 통지</div>
       <div class="card-body">
-        <div class="hint" style="margin:-2px 0 4px">신탁업자를 이용하시는 경우, 집합투자업자(운용사)와 신탁업자의 통지처를 <b>각각</b> 기재해 주세요.</div>
+        <div class="hint" style="margin:-2px 0 4px">집합투자기구별로 필요한 통지처를 추가해 주세요. 신탁업자를 이용하시는 경우, 집합투자업자(운용사)와 신탁업자의 통지처를 <b>각각</b> 기재해 주세요.</div>
  
         <div class="subhead">집합투자업자(운용사) 측 통지처</div>
-        <div class="hint" style="margin:-4px 0 10px">통지 대상 명칭은 입고계좌 정보의 <b>집합투자업자</b>로 자동 표기됩니다 — “(집합투자업자 지위에서)”.</div>
-        <div class="grid">
-          <div class="field full"><label>담당자 이름 및 직책</label><input id="mgrContact" placeholder="예: 조영주 운용역"></div>
-          <div class="field"><label>전화번호</label><input id="mgrPhone" class="mono" placeholder="예: 02-748-8927"></div>
-          <div class="field"><label>이메일</label><input id="mgrEmail" type="email" class="mono" placeholder="예: name@company.com"></div>
-          <div class="field full"><label>주소</label><input id="mgrAddr" placeholder="예: 서울특별시 영등포구 여의대로 108 파크원 타워2, 5층"></div>
+        <div class="hint" style="margin:-4px 0 10px">해당 집합투자기구를 선택하면 위에서 입력한 <b>집합투자업자</b>가 통지 대상으로 연결됩니다.</div>
+        <div class="repeat-editor" id="managerNoticeEditor"></div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn btn-ghost btn-sm" onclick="addNotice('manager')">운용사 통지처 추가</button>
         </div>
  
         <div class="subhead">신탁업자 측 통지처 <span style="color:var(--ink-soft);font-weight:600;text-transform:none;letter-spacing:0">— 신탁업자를 이용하는 경우에만 기재</span></div>
-        <div class="hint" style="margin:-4px 0 10px">통지 대상 명칭은 입고계좌 정보의 <b>신탁업자명</b>으로 자동 표기됩니다 — “(신탁업자 지위에서)”.</div>
-        <div class="grid">
-          <div class="field full"><label>담당자 이름 및 직책</label><input id="trContact" placeholder="예: 홍시연 과장"></div>
-          <div class="field"><label>전화번호</label><input id="trPhone" class="mono" placeholder="예: 02-2020-7229"></div>
-          <div class="field"><label>이메일</label><input id="trEmail" type="email" class="mono" placeholder="예: pbs.team@samsung.com"></div>
-          <div class="field full"><label>주소</label><input id="trAddr" placeholder="예: 서울특별시 서초구 서초대로74길 11, 삼성전자빌딩 9층"></div>
+        <div class="hint" style="margin:-4px 0 10px">해당 집합투자기구를 선택하면 위에서 입력한 <b>신탁업자명</b>이 통지 대상으로 연결됩니다.</div>
+        <div class="repeat-editor" id="trusteeNoticeEditor"></div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn btn-ghost btn-sm" onclick="addNotice('trustee')">신탁업자 통지처 추가</button>
         </div>
       </div>
     </div>
@@ -276,11 +361,27 @@
     <div class="card">
       <div class="card-head"><span class="n">3</span> 날인페이지</div>
       <div class="card-body">
-        <div class="hint" style="margin:-2px 0 12px">날인 페이지에 들어갈 항목입니다. <b>인수인(또는 펀드명)</b>을 비워두면 입고계좌 정보의 인수인(또는 펀드명)이 자동 사용됩니다. 주소·대표이사명은 날인 주체(통상 신탁업자) 기준으로 기재해 주세요.</div>
-        <div class="grid">
-          <div class="field full"><label>인수인(또는 펀드명)</label><input id="sealName" placeholder="비워두면 입고계좌 정보의 펀드명이 자동 사용됩니다"></div>
-          <div class="field full"><label>주소</label><input id="sealAddr" placeholder="예: 서울특별시 영등포구 의사당대로 88"></div>
-          <div class="field full"><label>대표이사명(또는 업무집행조합원명)</label><input id="ceoName" placeholder="예: 김성환 (한국투자증권)"></div>
+        <div class="hint" style="margin:-2px 0 12px">날인이 필요한 집합투자기구별로 페이지를 추가해 주세요. 날인 명칭을 비워두면 선택한 집합투자기구명이 사용됩니다.</div>
+        <div class="repeat-editor" id="sealPageEditor"></div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn btn-ghost btn-sm" onclick="addSealPage()">날인페이지 추가</button>
+        </div>
+      </div>
+    </div>
+    <datalist id="fundNameOptions"></datalist>
+
+    <div class="card">
+      <div class="card-head"><span class="n">4</span> 첨부파일</div>
+      <div class="card-body">
+        <div class="file-picker">
+          <div class="field">
+            <label>파일 선택</label>
+            <input id="attachmentInput" type="file" multiple onchange="selectAttachments(this.files)">
+          </div>
+          <div class="hint">파일당 최대 20MB, 제출 건당 최대 10개까지 첨부할 수 있습니다.</div>
+          <div class="file-list" id="pendingFileList"></div>
+          <div class="file-list" id="uploadedFileList"></div>
+          <div class="upload-status" id="uploadStatus"></div>
         </div>
       </div>
     </div>
@@ -293,10 +394,40 @@
  
   <!-- ============ ADMIN PANEL ============ -->
   <section class="panel" id="panel-admin">
-    <div class="storage-warn" id="storageWarn">🌐 브라우저 로컬 저장소(LocalStorage) 모드로 동작 중입니다. 정비님의 컴퓨터에 데이터가 영구히 안전하게 저장됩니다.</div>
+    <div class="storage-warn" id="storageWarn">브라우저 로컬 저장소(LocalStorage) 모드로 동작 중입니다. 중앙 저장소 설정 전에는 배포된 투자자 데이터가 서로 취합되지 않습니다.</div>
+
+    <div class="access-card admin-login hidden" id="adminLoginCard">
+      <h2>관리자 로그인</h2>
+      <p style="margin-bottom:12px">최종 집계 파일은 관리자 계정으로 로그인한 우리 측 사용자에게만 표시됩니다.</p>
+      <div class="admin-row">
+        <input id="adminEmail" type="email" class="mono" placeholder="관리자 이메일">
+        <input id="adminPassword" type="password" placeholder="비밀번호">
+        <button class="btn btn-primary btn-sm" onclick="adminLogin()">로그인</button>
+      </div>
+      <div class="hint" id="adminLoginHint" style="margin-top:10px">Supabase 설정 후 사용 가능합니다.</div>
+    </div>
+
+    <div id="adminContent">
  
-    <p class="lead">제출된 정보를 합산하고, <b>거래단위 그룹</b>을 지정하면 이사회의사록 첨부용 최종표가 자동 생성됩니다.
-      쿼터(수량)는 <b>그룹 합계금액 ÷ 거래단위</b>로 자동 계산됩니다. 같은 운용사·신탁업자라도 별도 묶음이 필요하면 그룹명을 다르게 지정하세요.</p>
+    <p class="lead">운용사가 직접 입력한 <b>쿼터 단위 · 쿼터 수 · 소속 집합투자기구</b>를 기준으로 최종 집계표가 생성됩니다.
+      집합투자기구 참여금액 합계가 쿼터 단위×수와 다르면 최종표에 불일치로 표시됩니다.</p>
+
+    <div class="access-card">
+      <h2>건별 관리</h2>
+      <div class="admin-row">
+        <select id="dealSelect" onchange="selectDeal(this.value)" style="flex:1;min-width:220px;padding:9px 11px;border:1px solid var(--line);border-radius:7px;font-family:inherit"></select>
+        <input id="newDealName" placeholder="새 건 이름">
+        <button class="btn btn-primary btn-sm" onclick="createDeal()">건 생성</button>
+      </div>
+      <div class="admin-row" style="margin-top:10px">
+        <input id="newInvestorName" placeholder="투자자명">
+        <input id="inviteDays" inputmode="numeric" value="14" placeholder="유효일수" style="max-width:110px">
+        <button class="btn btn-gold btn-sm" onclick="createInvestorLink()">투자자 링크 발급</button>
+        <button class="btn btn-danger btn-sm" onclick="clearInvestorLinks()">목록 초기화</button>
+      </div>
+      <div class="hint" id="dealHint" style="margin-top:10px">관리할 건을 선택해 주세요.</div>
+      <div class="file-list" id="invitationList"></div>
+    </div>
  
     <div class="toolbar">
       <span class="count-chip">제출 건수 <b id="cntText">0</b> 건 · 합계 <b id="sumText">₩0</b></span>
@@ -307,30 +438,32 @@
     </div>
  
     <div class="card">
-      <div class="card-head"><span class="n">A</span> 제출 내역 · 거래단위 그룹 지정</div>
+      <div class="card-head"><span class="n">A</span> 제출 내역</div>
       <div class="card-body" id="submitArea">
         <div class="empty"><div class="big">아직 제출된 정보가 없습니다</div>‘투자자 정보 입력’ 탭에서 제출하거나 ‘샘플 데이터 채우기’를 눌러보세요.</div>
       </div>
     </div>
  
     <div class="card" id="finalCard" style="display:none">
-      <div class="card-head"><span class="n">B</span> 최종표 (이사회의사록 첨부용)</div>
+      <div class="card-head"><span class="n">B</span> 최종 집계표</div>
       <div class="card-body">
         <div class="toolbar">
-          <span class="count-chip" style="font-size:12.5px">집합투자기구별 인수금액 · 거래단위 · 수량(쿼터)</span>
+          <span class="count-chip" style="font-size:12.5px">집합투자기구별 참여금액 · 거래단위 · 수량(쿼터)</span>
           <span class="spacer"></span>
           <button class="btn btn-gold btn-sm" onclick="copyTSV()">엑셀 붙여넣기용 복사</button>
         </div>
         <div class="final-scroll"><div id="finalTable"></div></div>
         <div class="note">
-          <b>거래단위</b>는 그룹 합계금액으로 기본 설정되며(쿼터=1), 칸을 직접 수정하면 쿼터가 <b>금액÷거래단위</b>로 다시 계산됩니다.
-          나누어떨어지지 않으면 빨간색으로 표시됩니다. · <b>기준</b> 문구의 ‘본건 펀드 N’은 표시 순서대로 자동 부여됩니다.
+          <b>쿼터 단위와 수</b>는 투자자가 제출한 값을 그대로 사용합니다.
+          쿼터별 집합투자기구 참여금액 합계가 쿼터 단위×수와 다르면 빨간색으로 표시됩니다.
+          운용사별로 묶어 최초 제출시각 순으로 정렬하고 같은 운용사의 펀드는 동일한 배경색으로 표시합니다.
+          <b>본건 펀드 N</b>은 정렬된 표시 순서대로 자동 부여됩니다.
         </div>
       </div>
     </div>
  
     <div class="card" id="noticeCard" style="display:none">
-      <div class="card-head"><span class="n">C</span> 인수인에 대한 통지처 목록</div>
+      <div class="card-head"><span class="n">C</span> 투자자에 대한 통지처 목록</div>
       <div class="card-body">
         <div class="toolbar">
           <span class="count-chip" style="font-size:12.5px">집합투자업자 지위 · 신탁업자 지위를 각각 별도 통지처로 표기</span>
@@ -339,8 +472,8 @@
         </div>
         <div class="final-scroll"><div id="noticeTable"></div></div>
         <div class="note">
-          신탁업자를 이용하는 건은 <b>운용사(집합투자업자 지위)</b>와 <b>신탁업자(신탁업자 지위)</b>가 각각 한 줄씩 생성됩니다.
-          신탁업자 정보가 비어 있으면 신탁업자 줄은 생성되지 않습니다.
+          투자자가 추가한 통지처마다 한 줄씩 생성되며, 선택한 집합투자기구의
+          <b>운용사(집합투자업자 지위)</b> 또는 <b>신탁업자(신탁업자 지위)</b>가 연결됩니다.
         </div>
       </div>
     </div>
@@ -349,27 +482,89 @@
       <div class="card-head"><span class="n">D</span> 날인 페이지 목록</div>
       <div class="card-body">
         <div class="toolbar">
-          <span class="count-chip" style="font-size:12.5px">인수인(펀드명) · 주소 · 대표이사명(또는 업무집행조합원명)</span>
+          <span class="count-chip" style="font-size:12.5px">투자자(펀드명) · 주소 · 대표이사명(또는 업무집행조합원명)</span>
           <span class="spacer"></span>
           <button class="btn btn-gold btn-sm" onclick="copySealTSV()">엑셀 붙여넣기용 복사</button>
         </div>
         <div class="final-scroll"><div id="sealTable"></div></div>
-        <div class="note">제출 건마다 한 줄씩 생성됩니다. 날인 주소가 비어 있으면 입고계좌 정보의 주소를 대신 사용합니다.</div>
+        <div class="note">투자자가 추가한 날인페이지마다 한 줄씩 생성됩니다. 날인 명칭과 주소가 비어 있으면 선택한 집합투자기구 정보를 대신 사용합니다.</div>
       </div>
+    </div>
     </div>
   </section>
 </div>
  
 <div class="toast" id="toast"></div>
  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* =========================================================
-   Storage layer (localStorage 사용으로 전면 전향)
+   Central storage / access control
+   - Supabase 설정값을 넣으면 중앙 취합 모드로 동작합니다.
+   - 비워두면 기존 로컬 시연 모드로 동작합니다.
 ========================================================= */
-const STORAGE_KEY = "kis_cb_submissions";
-const OVERRIDE_KEY = "kis_cb_trade_unit_overrides";
+const APP_CONFIG = {
+  supabaseUrl: "https://knkkxeubahhtxndmyqwm.supabase.co",
+  supabaseAnonKey: "sb_publishable_OcYdcJv7UO4UUZx8DBZctA_7WyXtbcR",
+  requireInvestorToken: true
+};
 
-const store = {
+const STORAGE_KEY = "investor_response_submissions";
+const OVERRIDE_KEY = "investor_response_trade_unit_overrides";
+const urlParams = new URLSearchParams(window.location.search);
+const INVESTOR_TOKEN = (urlParams.get("token") || "").trim();
+const ADMIN_MODE = urlParams.has("admin") || window.location.hash === "#admin";
+const CENTRAL_ENABLED = Boolean(APP_CONFIG.supabaseUrl && APP_CONFIG.supabaseAnonKey);
+const FILE_FUNCTION_URL = APP_CONFIG.supabaseUrl + "/functions/v1/dynamic-function";
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
+const MAX_FILE_COUNT = 10;
+let supabaseClient = null;
+let CURRENT_USER = null;
+let PENDING_FILES = [];
+let INVESTOR_FILES = [];
+let ADMIN_FILES = [];
+
+function getSupabase() {
+  if (!CENTRAL_ENABLED) return null;
+  if (!window.supabase) {
+    toast("Supabase 라이브러리를 불러오지 못했습니다. 네트워크 연결을 확인해 주세요.", "err");
+    return null;
+  }
+  if (!supabaseClient) {
+    supabaseClient = window.supabase.createClient(APP_CONFIG.supabaseUrl, APP_CONFIG.supabaseAnonKey);
+  }
+  return supabaseClient;
+}
+
+async function callRpc(name, args) {
+  const client = getSupabase();
+  if (!client) throw new Error("Supabase가 설정되지 않았습니다.");
+  const { data, error } = await client.rpc(name, args || {});
+  if (error) throw error;
+  return data;
+}
+
+async function callFileFunction(body, options) {
+  if (!CENTRAL_ENABLED) throw new Error("중앙 저장소가 설정되지 않았습니다.");
+  const headers = { apikey: APP_CONFIG.supabaseAnonKey };
+  if (options && options.admin) {
+    const client = getSupabase();
+    const { data } = await client.auth.getSession();
+    if (!data.session) throw new Error("관리자 로그인이 필요합니다.");
+    headers.Authorization = "Bearer " + data.session.access_token;
+  }
+  let requestBody = body;
+  if (!(body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+    requestBody = JSON.stringify(body || {});
+  }
+  const response = await fetch(FILE_FUNCTION_URL, { method: "POST", headers, body: requestBody });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || "파일 처리 중 오류가 발생했습니다.");
+  return result;
+}
+
+const localStore = {
   getRawRecords() {
     const data = localStorage.getItem(STORAGE_KEY);
     return data ? JSON.parse(data) : [];
@@ -383,6 +578,65 @@ const store = {
   },
   saveOverrides(overrides) {
     localStorage.setItem(OVERRIDE_KEY, JSON.stringify(overrides));
+  }
+};
+
+function normalizeRemoteRecord(row) {
+  const payload = row.payload || row;
+  return {
+    ...payload,
+    _id: row.id || payload._id,
+    _group: row.group_name || payload._group || ((payload.assetManager || payload.fundName || "미지정") + " / " + (payload.trustee || "직접")),
+    _ts: row.submitted_at ? new Date(row.submitted_at).getTime() : (payload._ts || Date.now())
+  };
+}
+
+const store = {
+  async getRawRecords(dealId) {
+    if (!CENTRAL_ENABLED) return localStore.getRawRecords();
+    if (!dealId) return [];
+    const rows = await callRpc("admin_list_submissions_by_deal", { p_deal_id:dealId });
+    return (rows || []).map(normalizeRemoteRecord);
+  },
+  async saveRawRecords(records) {
+    if (!CENTRAL_ENABLED) localStore.saveRawRecords(records);
+  },
+  async getOverrides() {
+    if (!CENTRAL_ENABLED) return localStore.getOverrides();
+    const rows = await callRpc("admin_list_trade_unit_overrides");
+    const overrides = {};
+    (rows || []).forEach(row => { overrides[row.group_name] = Number(row.trade_unit) || 0; });
+    return overrides;
+  },
+  async saveOverrides(overrides) {
+    if (!CENTRAL_ENABLED) localStore.saveOverrides(overrides);
+  },
+  async submitRecord(data) {
+    if (!CENTRAL_ENABLED) {
+      const currentRecords = localStore.getRawRecords();
+      currentRecords.push(data);
+      localStore.saveRawRecords(currentRecords);
+      return data;
+    }
+    if (!INVESTOR_TOKEN) throw new Error("투자자별 고유 링크가 필요합니다.");
+    return callRpc("submit_investor_response", { p_token: INVESTOR_TOKEN, p_payload: data });
+  },
+  async loadInvestorDraft() {
+    if (!CENTRAL_ENABLED || !INVESTOR_TOKEN) return null;
+    return callRpc("get_investor_submission", { p_token: INVESTOR_TOKEN });
+  },
+  async deleteRecord(id) {
+    if (!CENTRAL_ENABLED) {
+      localStore.saveRawRecords(SUBMISSIONS);
+      return;
+    }
+    await callRpc("admin_delete_submission", { p_submission_id: id });
+  },
+  async resetAll() {
+    if (!CENTRAL_ENABLED) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(OVERRIDE_KEY);
+    }
   }
 };
 
@@ -400,6 +654,9 @@ function esc(str) {
 function escAttr(str) {
   if (!str) return '';
   return String(str).replace(/"/g, '&quot;');
+}
+function escJsArg(str) {
+  return escAttr(String(str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"));
 }
  
 /* =========================================================
@@ -438,75 +695,693 @@ function koreanAmount(n){
 /* =========================================================
    Tabs
 ========================================================= */
-function switchTab(name){
+async function switchTab(name){
   document.getElementById('panel-input').classList.toggle('active', name==='input');
   document.getElementById('panel-admin').classList.toggle('active', name==='admin');
   document.getElementById('tab-input').setAttribute('aria-selected', name==='input');
   document.getElementById('tab-admin').setAttribute('aria-selected', name==='admin');
-  if (name==='admin') loadAll();
+  if (name==='admin') await loadAll();
 }
  
 /* =========================================================
    Form
 ========================================================= */
-const FIELDS = ['fundName','assetManager','trustee','amount',
-  'bondBroker','brokerAcct','ksdCode','custFund','custDep','bizNo','address',
-  'mgrContact','mgrPhone','mgrEmail','mgrAddr',
-  'trContact','trPhone','trEmail','trAddr',
-  'sealName','sealAddr','ceoName'];
+const FUND_FIELDS = ['fundName','assetManager','trustee','amount',
+  'bondBroker','brokerAcct','ksdCode','custFund','custDep','bizNo','address'];
+let QUOTAS = [];
+let MANAGER_NOTICES = [];
+let TRUSTEE_NOTICES = [];
+let SEAL_PAGES = [];
  
 function parseAmount(v){ return Number(String(v||'').replace(/[^0-9.-]/g,'')) || 0; }
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+  return (bytes / 1024 / 1024).toFixed(1) + " MB";
+}
+
+function selectAttachments(fileList) {
+  const incoming = Array.from(fileList || []);
+  for (const file of incoming) {
+    if (file.size > MAX_FILE_SIZE) {
+      toast(file.name + " 파일은 20MB를 초과합니다.", "err");
+      continue;
+    }
+    if (PENDING_FILES.length + INVESTOR_FILES.length >= MAX_FILE_COUNT) {
+      toast("첨부파일은 최대 10개까지 가능합니다.", "err");
+      break;
+    }
+    const duplicate = PENDING_FILES.some(item => item.name === file.name && item.size === file.size);
+    if (!duplicate) PENDING_FILES.push(file);
+  }
+  document.getElementById("attachmentInput").value = "";
+  renderAttachmentLists();
+}
+
+function removePendingFile(index) {
+  PENDING_FILES.splice(index, 1);
+  renderAttachmentLists();
+}
+
+function renderAttachmentLists() {
+  const pending = document.getElementById("pendingFileList");
+  const uploaded = document.getElementById("uploadedFileList");
+  if (!pending || !uploaded) return;
+  pending.innerHTML = PENDING_FILES.map((file, index) =>
+    '<div class="file-row"><span class="file-name">'+esc(file.name)+'</span>'+
+    '<span class="file-meta">'+formatBytes(file.size)+' · 업로드 대기</span>'+
+    '<button class="btn btn-danger btn-sm" onclick="removePendingFile('+index+')">제외</button></div>'
+  ).join("");
+  uploaded.innerHTML = INVESTOR_FILES.map(file =>
+    '<div class="file-row"><span class="file-name">'+esc(file.original_name)+'</span>'+
+    '<span class="file-meta">'+formatBytes(file.size_bytes||0)+' · 업로드 완료</span>'+
+    '<button class="btn btn-danger btn-sm" onclick="deleteInvestorFile(\''+file.id+'\')">삭제</button></div>'
+  ).join("");
+}
+
+async function loadInvestorFiles() {
+  if (!CENTRAL_ENABLED || !INVESTOR_TOKEN) return;
+  const result = await callFileFunction({ action:"investor-list", token:INVESTOR_TOKEN });
+  INVESTOR_FILES = result.files || [];
+  renderAttachmentLists();
+}
+
+async function uploadPendingFiles() {
+  if (!PENDING_FILES.length) return;
+  const status = document.getElementById("uploadStatus");
+  const files = [...PENDING_FILES];
+  for (let index = 0; index < files.length; index++) {
+    status.textContent = "첨부파일 업로드 중 " + (index + 1) + " / " + files.length;
+    const form = new FormData();
+    form.append("action", "upload");
+    form.append("token", INVESTOR_TOKEN);
+    form.append("file", files[index]);
+    await callFileFunction(form);
+  }
+  PENDING_FILES = [];
+  status.textContent = "첨부파일 업로드가 완료되었습니다.";
+  await loadInvestorFiles();
+}
+
+async function deleteInvestorFile(fileId) {
+  if (!confirm("이 첨부파일을 삭제하시겠습니까?")) return;
+  try {
+    await callFileFunction({ action:"investor-delete", token:INVESTOR_TOKEN, fileId });
+    await loadInvestorFiles();
+    toast("첨부파일이 삭제되었습니다.", "ok");
+  } catch (err) {
+    toast(err.message, "err");
+  }
+}
+
+function newFund(seed) {
+  const fund = { _key: 'fund_' + Date.now() + '_' + Math.random().toString(36).slice(2,7) };
+  FUND_FIELDS.forEach(field => fund[field] = seed && seed[field] !== undefined ? seed[field] : '');
+  fund.amount = parseAmount(fund.amount);
+  return fund;
+}
+
+function newQuota(seed) {
+  return {
+    _key: 'quota_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    quotaUnit: parseAmount(seed && seed.quotaUnit),
+    quotaCount: Number(seed && seed.quotaCount) || 1,
+    funds: seed && Array.isArray(seed.funds) && seed.funds.length
+      ? seed.funds.map(newFund)
+      : [newFund()]
+  };
+}
+
+function addQuota(seed) {
+  QUOTAS.push(newQuota(seed));
+  renderQuotaEditor();
+}
+
+function removeQuota(quotaIndex) {
+  if (QUOTAS.length === 1) {
+    toast('쿼터는 최소 1개가 필요합니다.', 'err');
+    return;
+  }
+  QUOTAS.splice(quotaIndex, 1);
+  renderQuotaEditor();
+}
+
+function addFund(quotaIndex, seed) {
+  QUOTAS[quotaIndex].funds.push(newFund(seed));
+  renderQuotaEditor();
+}
+
+function removeFund(quotaIndex, fundIndex) {
+  if (QUOTAS[quotaIndex].funds.length === 1) {
+    toast('각 쿼터에는 집합투자기구가 최소 1개 필요합니다.', 'err');
+    return;
+  }
+  QUOTAS[quotaIndex].funds.splice(fundIndex, 1);
+  renderQuotaEditor();
+}
+
+function updateQuotaValue(quotaIndex, field, value) {
+  QUOTAS[quotaIndex][field] = field === 'quotaCount'
+    ? Math.max(0, Number(value) || 0)
+    : parseAmount(value);
+  renderQuotaTotals();
+}
+
+function updateFundValue(quotaIndex, fundIndex, field, value) {
+  QUOTAS[quotaIndex].funds[fundIndex][field] = field === 'amount' ? parseAmount(value) : value;
+  renderQuotaTotals();
+  if (field === 'fundName') renderFundOptions();
+}
+
+function renderQuotaTotals() {
+  QUOTAS.forEach((quota, index) => {
+    const total = quota.funds.reduce((sum, fund) => sum + parseAmount(fund.amount), 0);
+    const expected = parseAmount(quota.quotaUnit) * (Number(quota.quotaCount) || 0);
+    const target = document.getElementById('quotaTotal_' + index);
+    if (!target) return;
+    target.innerHTML = '펀드 합계 <b>'+formatWon(total)+'</b> · 쿼터 합계 <b>'+formatWon(expected)+'</b>';
+    target.style.color = total === expected ? 'var(--green)' : 'var(--red)';
+  });
+}
+
+function fundField(quotaIndex, fundIndex, field, label, placeholder, full, inputClass) {
+  const fund = QUOTAS[quotaIndex].funds[fundIndex];
+  const value = field === 'amount' && fund[field] ? Number(fund[field]).toLocaleString('ko-KR') : (fund[field] || '');
+  return '<div class="field'+(full?' full':'')+'"><label>'+label+'</label>'+
+    '<input '+(inputClass?'class="'+inputClass+'" ':'')+'value="'+escAttr(value)+'" placeholder="'+escAttr(placeholder||'')+'" '+
+    'oninput="updateFundValue('+quotaIndex+','+fundIndex+',\''+field+'\',this.value)">'+
+    (field === 'amount' ? '<div class="hint live">'+(fund.amount ? koreanAmount(fund.amount) : '금액을 입력하면 한글 표기가 표시됩니다')+'</div>' : '')+
+    '</div>';
+}
+
+function renderQuotaEditor() {
+  const area = document.getElementById('quotaEditor');
+  area.innerHTML = QUOTAS.map((quota, qi) => {
+    const funds = quota.funds.map((fund, fi) =>
+      '<div class="fund-block">'+
+        '<div class="fund-head"><span>집합투자기구 '+(fi+1)+'</span>'+
+          '<button class="btn btn-danger btn-sm" onclick="removeFund('+qi+','+fi+')">삭제</button></div>'+
+        '<div class="grid">'+
+          fundField(qi,fi,'fundName','집합투자기구명 <span class="req">*</span>','예: 펀드명')+
+          fundField(qi,fi,'assetManager','집합투자업자(운용사) <span class="req">*</span>','예: 운용사명')+
+          fundField(qi,fi,'trustee','신탁업자명','예: 신탁업자명')+
+          fundField(qi,fi,'amount','참여금액 <span class="req">*</span>','예: 2400000000')+
+          fundField(qi,fi,'bondBroker','자기분/투자자분 입고 증권사','예: 입고 증권사명')+
+          fundField(qi,fi,'brokerAcct','자기분/투자자분 증권사 계좌번호','예: 증권사 계좌번호',false,'mono')+
+          fundField(qi,fi,'ksdCode','예탁원 펀드코드','예: 202420A00015',false,'mono')+
+          fundField(qi,fi,'custFund','수탁은행 예탁 계좌번호','예: 17-0474-03',false,'mono')+
+          fundField(qi,fi,'custDep','수탁은행 예탁코드명','예: 3-0269-03',false,'mono')+
+          fundField(qi,fi,'bizNo','사업자등록번호(또는 고유번호)','예: 000-00-00000',false,'mono')+
+          fundField(qi,fi,'address','주소','예: 주소',true)+
+        '</div>'+
+      '</div>'
+    ).join('');
+    return '<div class="quota-block">'+
+      '<div class="quota-head"><span class="title">쿼터 '+(qi+1)+'</span>'+
+        '<div class="field" style="min-width:180px"><label>쿼터 단위 <span class="req">*</span></label>'+
+          '<input inputmode="numeric" value="'+escAttr(quota.quotaUnit ? quota.quotaUnit.toLocaleString('ko-KR') : '')+'" placeholder="예: 3500000000" oninput="updateQuotaValue('+qi+',\'quotaUnit\',this.value)"></div>'+
+        '<div class="field" style="width:130px"><label>쿼터 수 <span class="req">*</span></label>'+
+          '<input inputmode="decimal" value="'+escAttr(quota.quotaCount)+'" placeholder="예: 1" oninput="updateQuotaValue('+qi+',\'quotaCount\',this.value)"></div>'+
+        '<span class="quota-total" id="quotaTotal_'+qi+'"></span>'+
+        '<button class="btn btn-danger btn-sm" onclick="removeQuota('+qi+')">쿼터 삭제</button>'+
+      '</div>'+funds+
+      '<button class="btn btn-ghost btn-sm" onclick="addFund('+qi+')">집합투자기구 추가</button>'+
+    '</div>';
+  }).join('');
+  renderQuotaTotals();
+  renderFundOptions();
+}
+
+function allFunds() {
+  return QUOTAS.flatMap(quota => quota.funds || []);
+}
+
+function renderFundOptions() {
+  const target = document.getElementById('fundNameOptions');
+  if (!target) return;
+  const names = [...new Set(allFunds().map(fund => String(fund.fundName || '').trim()).filter(Boolean))];
+  target.innerHTML = names.map(name => '<option value="'+escAttr(name)+'"></option>').join('');
+}
+
+function newNotice(seed) {
+  return {
+    targetFund: String(seed && (seed.targetFund || seed.fund) || ''),
+    contact: String(seed && seed.contact || ''),
+    phone: String(seed && seed.phone || ''),
+    email: String(seed && seed.email || ''),
+    addr: String(seed && seed.addr || '')
+  };
+}
+
+function noticeList(kind) {
+  return kind === 'trustee' ? TRUSTEE_NOTICES : MANAGER_NOTICES;
+}
+
+function addNotice(kind, seed) {
+  noticeList(kind).push(newNotice(seed));
+  renderNoticeEditors();
+}
+
+function removeNotice(kind, index) {
+  noticeList(kind).splice(index, 1);
+  renderNoticeEditors();
+}
+
+function updateNoticeValue(kind, index, field, value) {
+  noticeList(kind)[index][field] = value;
+}
+
+function noticeField(kind, index, field, label, placeholder, full, type, inputClass) {
+  const notice = noticeList(kind)[index];
+  return '<div class="field'+(full ? ' full' : '')+'"><label>'+label+'</label>'+
+    '<input '+(type ? 'type="'+type+'" ' : '')+(inputClass ? 'class="'+inputClass+'" ' : '')+
+    (field === 'targetFund' ? 'list="fundNameOptions" ' : '')+
+    'value="'+escAttr(notice[field] || '')+'" placeholder="'+escAttr(placeholder || '')+'" '+
+    'oninput="updateNoticeValue(\''+kind+'\','+index+',\''+field+'\',this.value)"></div>';
+}
+
+function renderNoticeEditor(kind, targetId, title) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  target.innerHTML = noticeList(kind).map((notice, index) =>
+    '<div class="repeat-block">'+
+      '<div class="repeat-head"><span>'+title+' '+(index+1)+'</span>'+
+        '<button class="btn btn-danger btn-sm" onclick="removeNotice(\''+kind+'\','+index+')">삭제</button></div>'+
+      '<div class="grid">'+
+        noticeField(kind,index,'targetFund','해당 집합투자기구','위에서 입력한 집합투자기구명을 선택 또는 입력',true)+
+        noticeField(kind,index,'contact','담당자 이름 및 직책','예: 담당자명 및 직책',true)+
+        noticeField(kind,index,'phone','전화번호','예: 02-0000-0000',false,'','mono')+
+        noticeField(kind,index,'email','이메일','예: name@company.com',false,'email','mono')+
+        noticeField(kind,index,'addr','주소','예: 주소',true)+
+      '</div>'+
+    '</div>'
+  ).join('');
+}
+
+function renderNoticeEditors() {
+  renderNoticeEditor('manager', 'managerNoticeEditor', '운용사 통지처');
+  renderNoticeEditor('trustee', 'trusteeNoticeEditor', '신탁업자 통지처');
+}
+
+function newSealPage(seed) {
+  return {
+    targetFund: String(seed && (seed.targetFund || seed.fund) || ''),
+    sealName: String(seed && seed.sealName || ''),
+    sealAddr: String(seed && seed.sealAddr || ''),
+    ceoName: String(seed && seed.ceoName || '')
+  };
+}
+
+function addSealPage(seed) {
+  SEAL_PAGES.push(newSealPage(seed));
+  renderSealPageEditor();
+}
+
+function removeSealPage(index) {
+  SEAL_PAGES.splice(index, 1);
+  renderSealPageEditor();
+}
+
+function updateSealValue(index, field, value) {
+  SEAL_PAGES[index][field] = value;
+}
+
+function sealField(index, field, label, placeholder) {
+  const page = SEAL_PAGES[index];
+  return '<div class="field full"><label>'+label+'</label>'+
+    '<input '+(field === 'targetFund' ? 'list="fundNameOptions" ' : '')+
+    'value="'+escAttr(page[field] || '')+'" placeholder="'+escAttr(placeholder || '')+'" '+
+    'oninput="updateSealValue('+index+',\''+field+'\',this.value)"></div>';
+}
+
+function renderSealPageEditor() {
+  const target = document.getElementById('sealPageEditor');
+  if (!target) return;
+  target.innerHTML = SEAL_PAGES.map((page, index) =>
+    '<div class="repeat-block">'+
+      '<div class="repeat-head"><span>날인페이지 '+(index+1)+'</span>'+
+        '<button class="btn btn-danger btn-sm" onclick="removeSealPage('+index+')">삭제</button></div>'+
+      '<div class="grid">'+
+        sealField(index,'targetFund','해당 집합투자기구','위에서 입력한 집합투자기구명을 선택 또는 입력')+
+        sealField(index,'sealName','날인 명칭','비워두면 선택한 집합투자기구명이 사용됩니다')+
+        sealField(index,'sealAddr','주소','예: 날인 주체의 주소')+
+        sealField(index,'ceoName','대표이사명(또는 업무집행조합원명)','예: 대표자명')+
+      '</div>'+
+    '</div>'
+  ).join('');
+}
  
-document.getElementById('amount').addEventListener('input', e=>{
-  const v = parseAmount(e.target.value);
-  const h = document.getElementById('amountHint');
-  h.textContent = v > 0 ? koreanAmount(v) : '금액을 입력하면 한글 표기가 표시됩니다';
-});
+function clearForm(){
+  QUOTAS = [newQuota()];
+  MANAGER_NOTICES = [newNotice()];
+  TRUSTEE_NOTICES = [];
+  SEAL_PAGES = [newSealPage()];
+  PENDING_FILES = [];
+  renderQuotaEditor();
+  renderNoticeEditors();
+  renderSealPageEditor();
+  renderAttachmentLists();
+}
  
-function clearForm(){ FIELDS.forEach(f => document.getElementById(f).value = ''); document.getElementById('amountHint').textContent='금액을 입력하면 한글 표기가 표시됩니다'; }
- 
-function submitForm(){
+async function submitForm(){
   const data = {};
-  FIELDS.forEach(f => data[f] = document.getElementById(f).value.trim());
-  data.amount = parseAmount(data.amount);
- 
-  if (!data.fundName){ toast('인수인(또는 펀드명)은 필수입니다.', 'err'); switchTab('input'); document.getElementById('fundName').focus(); return; }
-  if (!data.amount){ toast('매매금액(인수금액)은 필수입니다.', 'err'); document.getElementById('amount').focus(); return; }
+  data.quotas = QUOTAS.map(quota => ({
+    quotaUnit: parseAmount(quota.quotaUnit),
+    quotaCount: Number(quota.quotaCount) || 0,
+    funds: quota.funds.map(fund => {
+      const clean = {};
+      FUND_FIELDS.forEach(field => clean[field] = field === 'amount' ? parseAmount(fund[field]) : String(fund[field] || '').trim());
+      return clean;
+    })
+  }));
+  data.managerNotices = MANAGER_NOTICES.map(item => ({
+    targetFund:String(item.targetFund || '').trim(),
+    contact:String(item.contact || '').trim(),
+    phone:String(item.phone || '').trim(),
+    email:String(item.email || '').trim(),
+    addr:String(item.addr || '').trim()
+  })).filter(item => Object.values(item).some(Boolean));
+  data.trusteeNotices = TRUSTEE_NOTICES.map(item => ({
+    targetFund:String(item.targetFund || '').trim(),
+    contact:String(item.contact || '').trim(),
+    phone:String(item.phone || '').trim(),
+    email:String(item.email || '').trim(),
+    addr:String(item.addr || '').trim()
+  })).filter(item => Object.values(item).some(Boolean));
+  data.sealPages = SEAL_PAGES.map(item => ({
+    targetFund:String(item.targetFund || '').trim(),
+    sealName:String(item.sealName || '').trim(),
+    sealAddr:String(item.sealAddr || '').trim(),
+    ceoName:String(item.ceoName || '').trim()
+  })).filter(item => Object.values(item).some(Boolean));
+
+  for (let qi = 0; qi < data.quotas.length; qi++) {
+    const quota = data.quotas[qi];
+    if (!quota.quotaUnit || !quota.quotaCount) {
+      toast('쿼터 '+(qi+1)+'의 단위와 수를 입력해 주세요.', 'err');
+      return;
+    }
+    for (let fi = 0; fi < quota.funds.length; fi++) {
+      const fund = quota.funds[fi];
+      if (!fund.fundName || !fund.assetManager || !fund.amount) {
+        toast('쿼터 '+(qi+1)+'의 집합투자기구 '+(fi+1)+' 필수항목을 확인해 주세요.', 'err');
+        return;
+      }
+    }
+  }
+  const fundNames = new Set(data.quotas.flatMap(quota => quota.funds.map(fund => fund.fundName)));
+  const linkedItems = [
+    ...data.managerNotices.map((item, index) => ({ ...item, label:'운용사 통지처 '+(index+1) })),
+    ...data.trusteeNotices.map((item, index) => ({ ...item, label:'신탁업자 통지처 '+(index+1) })),
+    ...data.sealPages.map((item, index) => ({ ...item, label:'날인페이지 '+(index+1) }))
+  ];
+  for (const item of linkedItems) {
+    if (!item.targetFund || !fundNames.has(item.targetFund)) {
+      toast(item.label+'의 해당 집합투자기구를 위 입력값 중에서 선택해 주세요.', 'err');
+      return;
+    }
+  }
  
   const id = 'rec_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
   data._id = id;
   data._ts = Date.now();
   
-  const currentRecords = store.getRawRecords();
-  currentRecords.push(data);
-  store.saveRawRecords(currentRecords);
-  
-  toast('제출 및 로컬에 저장되었습니다 · ' + data.fundName, 'ok');
-  clearForm();
-  refreshCount();
+  try {
+    await store.submitRecord(data);
+    let uploadFailed = false;
+    if (CENTRAL_ENABLED && PENDING_FILES.length) {
+      try {
+        await uploadPendingFiles();
+      } catch (uploadError) {
+        uploadFailed = true;
+        document.getElementById("uploadStatus").textContent = uploadError.message || "첨부파일 업로드에 실패했습니다.";
+      }
+    }
+    toast(uploadFailed ? '정보는 제출되었지만 일부 첨부파일 업로드에 실패했습니다.' : (CENTRAL_ENABLED ? '제출 및 중앙 집계가 완료되었습니다.' : '제출 및 로컬에 저장되었습니다.'), uploadFailed ? 'err' : 'ok');
+    if (!CENTRAL_ENABLED) clearForm();
+    await refreshCount();
+  } catch (err) {
+    toast(err.message || '제출 중 오류가 발생했습니다.', 'err');
+  }
 }
  
 /* =========================================================
    Admin: load / render / group
 ========================================================= */
 let RECORDS = [];
-let tradeUnitOverride = {};
- 
-function refreshCount(){
-  const recs = store.getRawRecords();
-  document.getElementById('cntBadge').textContent = recs.length;
+let SUBMISSIONS = [];
+let DEALS = [];
+let ACTIVE_DEAL_ID = "";
+let INVITATIONS = [];
+
+async function loadDeals() {
+  if (!CENTRAL_ENABLED || !CURRENT_USER) return;
+  DEALS = await callRpc("admin_list_deals");
+  if (!ACTIVE_DEAL_ID && DEALS.length) ACTIVE_DEAL_ID = DEALS[0].id;
+  if (ACTIVE_DEAL_ID && !DEALS.some(deal => deal.id === ACTIVE_DEAL_ID)) {
+    ACTIVE_DEAL_ID = DEALS.length ? DEALS[0].id : "";
+  }
+  const select = document.getElementById("dealSelect");
+  select.innerHTML = DEALS.length
+    ? DEALS.map(deal => '<option value="'+deal.id+'"'+(deal.id===ACTIVE_DEAL_ID?' selected':'')+'>'+esc(deal.name)+'</option>').join("")
+    : '<option value="">생성된 건이 없습니다</option>';
+  document.getElementById("dealHint").textContent = ACTIVE_DEAL_ID
+    ? "선택한 건의 제출 데이터와 첨부파일만 표시됩니다."
+    : "먼저 새 건을 생성해 주세요.";
+  await loadInvitations();
+}
+
+async function selectDeal(dealId) {
+  ACTIVE_DEAL_ID = dealId;
+  await loadInvitations();
+  await loadAll();
+}
+
+async function createDeal() {
+  const input = document.getElementById("newDealName");
+  const name = input.value.trim();
+  if (!name) {
+    toast("새 건 이름을 입력해 주세요.", "err");
+    return;
+  }
+  try {
+    const created = await callRpc("admin_create_deal", { p_name:name });
+    input.value = "";
+    ACTIVE_DEAL_ID = created;
+    await loadDeals();
+    await loadAll();
+    toast("새 건이 생성되었습니다.", "ok");
+  } catch (err) {
+    toast(err.message || "건을 생성하지 못했습니다.", "err");
+  }
+}
+
+function buildInvestorUrl(token) {
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("token", token);
+  return url.toString();
+}
+
+async function copyValue(value, message) {
+  try {
+    await navigator.clipboard.writeText(value);
+  } catch (err) {
+    copyTextToClipboard(value);
+    return;
+  }
+  toast(message, "ok");
+}
+
+async function createInvestorLink() {
+  if (!ACTIVE_DEAL_ID) {
+    toast("먼저 건을 선택해 주세요.", "err");
+    return;
+  }
+  const nameInput = document.getElementById("newInvestorName");
+  const investorName = nameInput.value.trim();
+  const days = Math.max(1, Number(document.getElementById("inviteDays").value) || 14);
+  if (!investorName) {
+    toast("투자자명을 입력해 주세요.", "err");
+    return;
+  }
+  try {
+    const rows = await callRpc("admin_create_invitation", {
+      p_deal_id:ACTIVE_DEAL_ID,
+      p_investor_name:investorName,
+      p_valid_days:days
+    });
+    const result = Array.isArray(rows) ? rows[0] : rows;
+    const url = buildInvestorUrl(result.token);
+    nameInput.value = "";
+    await loadInvitations();
+    await copyValue(url, "투자자 링크가 복사되었습니다.");
+  } catch (err) {
+    toast(err.message || "투자자 링크를 발급하지 못했습니다.", "err");
+  }
+}
+
+async function clearInvestorLinks() {
+  if (!ACTIVE_DEAL_ID) {
+    toast("먼저 건을 선택해 주세요.", "err");
+    return;
+  }
+  if (!confirm("선택한 건의 투자자 링크를 모두 무효화하고 목록을 비우시겠습니까? 제출 데이터는 유지됩니다.")) return;
+  try {
+    await callRpc("admin_clear_invitations", { p_deal_id:ACTIVE_DEAL_ID });
+    await loadInvitations();
+    toast("투자자 목록을 초기화했습니다.", "ok");
+  } catch (err) {
+    toast(err.message || "투자자 목록을 초기화하지 못했습니다.", "err");
+  }
+}
+
+async function loadInvitations() {
+  const area = document.getElementById("invitationList");
+  if (!ACTIVE_DEAL_ID) {
+    INVITATIONS = [];
+    area.innerHTML = "";
+    return;
+  }
+  try {
+    INVITATIONS = await callRpc("admin_list_invitations", { p_deal_id:ACTIVE_DEAL_ID });
+    area.innerHTML = INVITATIONS.length ? INVITATIONS.map(invitation => {
+      const status = invitation.revoked_at ? "회수됨" : (invitation.submitted_at ? "제출 완료" : "미제출");
+      const expiry = invitation.expires_at ? new Date(invitation.expires_at).toLocaleDateString("ko-KR") : "없음";
+      return '<div class="file-row"><span class="file-name">'+esc(invitation.investor_name||"이름 없음")+'</span>'+
+        '<span class="file-meta">'+status+' · 만료 '+esc(expiry)+'</span></div>';
+    }).join("") : '<div class="hint">이 건에 발급된 투자자 링크가 없습니다.</div>';
+  } catch (err) {
+    area.innerHTML = '<div class="hint">투자자 링크 목록을 불러오지 못했습니다.</div>';
+  }
+}
+
+function normalizeQuotas(payload) {
+  if (Array.isArray(payload.quotas) && payload.quotas.length) {
+    return payload.quotas.map((quota, qi) => ({
+      quotaUnit: parseAmount(quota.quotaUnit),
+      quotaCount: Number(quota.quotaCount) || 0,
+      funds: (quota.funds || []).map(newFund),
+      _quotaIndex: qi
+    }));
+  }
+  if (payload.fundName) {
+    return [{
+      quotaUnit: parseAmount(payload._tradeUnit || payload.amount),
+      quotaCount: 1,
+      funds: [newFund(payload)],
+      _quotaIndex: 0
+    }];
+  }
+  return [newQuota()];
+}
+
+function normalizeManagerNotices(payload) {
+  if (Array.isArray(payload.managerNotices)) return payload.managerNotices.map(newNotice);
+  if (payload.mgrContact || payload.mgrPhone || payload.mgrEmail || payload.mgrAddr) {
+    return [newNotice({
+      contact:payload.mgrContact, phone:payload.mgrPhone,
+      email:payload.mgrEmail, addr:payload.mgrAddr
+    })];
+  }
+  return [];
+}
+
+function normalizeTrusteeNotices(payload) {
+  if (Array.isArray(payload.trusteeNotices)) return payload.trusteeNotices.map(newNotice);
+  if (payload.trContact || payload.trPhone || payload.trEmail || payload.trAddr) {
+    return [newNotice({
+      contact:payload.trContact, phone:payload.trPhone,
+      email:payload.trEmail, addr:payload.trAddr
+    })];
+  }
+  return [];
+}
+
+function normalizeSealPages(payload) {
+  if (Array.isArray(payload.sealPages)) return payload.sealPages.map(newSealPage);
+  if (payload.sealName || payload.sealAddr || payload.ceoName) {
+    return [newSealPage({
+      sealName:payload.sealName, sealAddr:payload.sealAddr, ceoName:payload.ceoName
+    })];
+  }
+  return [];
+}
+
+function flattenSubmissions(submissions) {
+  const rows = [];
+  submissions.forEach(submission => {
+    const quotas = normalizeQuotas(submission);
+    quotas.forEach((quota, qi) => {
+      quota.funds.forEach((fund, fi) => {
+        rows.push({
+          ...submission,
+          ...fund,
+          _id: submission._id,
+          _rowKey: submission._id + '_' + qi + '_' + fi,
+          _quotaKey: submission._id + '_' + qi,
+          quotaUnit: parseAmount(quota.quotaUnit),
+          quotaCount: Number(quota.quotaCount) || 0,
+          quotaIndex: qi,
+          fundIndex: fi
+        });
+      });
+    });
+  });
+  return rows;
 }
  
-function loadAll(){
-  RECORDS = store.getRawRecords();
-  tradeUnitOverride = store.getOverrides();
+async function refreshCount(){
+  if (CENTRAL_ENABLED && !CURRENT_USER) {
+    document.getElementById('cntBadge').textContent = '-';
+    return;
+  }
+  try {
+    const recs = await store.getRawRecords(ACTIVE_DEAL_ID);
+    document.getElementById('cntBadge').textContent = recs.length;
+  } catch (err) {
+    document.getElementById('cntBadge').textContent = '-';
+  }
+}
+ 
+async function loadAll(){
+  if (CENTRAL_ENABLED && !CURRENT_USER) {
+    renderAdminAccess();
+    return;
+  }
+  if (CENTRAL_ENABLED && !ACTIVE_DEAL_ID) {
+    SUBMISSIONS = [];
+    RECORDS = [];
+    ADMIN_FILES = [];
+    document.getElementById('cntBadge').textContent = '0';
+    document.getElementById('cntText').textContent = '0';
+    document.getElementById('sumText').textContent = formatWon(0);
+    renderSubmissions();
+    renderFinal();
+    renderNotices();
+    renderSeal();
+    return;
+  }
+  try {
+    SUBMISSIONS = await store.getRawRecords(ACTIVE_DEAL_ID);
+    RECORDS = flattenSubmissions(SUBMISSIONS);
+  } catch (err) {
+    toast(err.message || '집계 데이터를 불러오지 못했습니다.', 'err');
+    RECORDS = [];
+  }
+  if (CENTRAL_ENABLED) {
+    try {
+      const result = await callFileFunction({ action:"admin-list", dealId:ACTIVE_DEAL_ID }, { admin:true });
+      ADMIN_FILES = result.files || [];
+    } catch (fileError) {
+      ADMIN_FILES = [];
+      toast("제출 정보는 불러왔지만 첨부파일 목록을 불러오지 못했습니다.", "err");
+    }
+  }
   
-  RECORDS.forEach(r => { 
-    if (!r._group) r._group = (r.assetManager || r.fundName || '미지정') + ' / ' + (r.trustee || '직접'); 
-  });
-  
-  document.getElementById('cntBadge').textContent = RECORDS.length;
-  document.getElementById('cntText').textContent = RECORDS.length;
+  document.getElementById('cntBadge').textContent = SUBMISSIONS.length;
+  document.getElementById('cntText').textContent = SUBMISSIONS.length;
   const total = RECORDS.reduce((s,r)=> s + (r.amount||0), 0);
   document.getElementById('sumText').textContent = formatWon(total);
   
@@ -518,23 +1393,33 @@ function loadAll(){
  
 function renderSubmissions(){
   const area = document.getElementById('submitArea');
-  if (!RECORDS.length){
+  if (!SUBMISSIONS.length){
     area.innerHTML = '<div class="empty"><div class="big">아직 제출된 정보가 없습니다</div>‘투자자 정보 입력’ 탭에서 제출하거나 ‘샘플 데이터 채우기’를 눌러보세요.</div>';
     return;
   }
   let html = '<div style="overflow-x:auto"><table class="grid-tbl"><thead><tr>'+
-    '<th>#</th><th>인수인(펀드명)</th><th>집합투자업자</th><th>신탁업자</th><th class="num">매매금액</th>'+
-    '<th>거래단위 그룹</th><th>통지처(운용사 / 신탁)</th><th></th></tr></thead><tbody>';
-  RECORDS.forEach((r,i)=>{
-    const mgrC = r.mgrContact ? esc(r.mgrContact) : '<span style="color:#b3b8c2">운용사 -</span>';
-    const trC  = r.trContact  ? esc(r.trContact)  : '<span style="color:#b3b8c2">신탁 -</span>';
+    '<th>#</th><th>집합투자업자</th><th>쿼터 수</th><th>집합투자기구 수</th><th class="num">참여금액 합계</th>'+
+    '<th>첨부파일</th><th>통지처(운용사 / 신탁)</th><th></th></tr></thead><tbody>';
+  SUBMISSIONS.forEach((r,i)=>{
+    const quotas = normalizeQuotas(r);
+    const funds = quotas.flatMap(q => q.funds);
+    const managerNotices = normalizeManagerNotices(r);
+    const trusteeNotices = normalizeTrusteeNotices(r);
+    const managers = [...new Set(funds.map(f => f.assetManager).filter(Boolean))].join(', ');
+    const total = funds.reduce((sum, fund) => sum + parseAmount(fund.amount), 0);
+    const files = ADMIN_FILES.filter(file => file.submission_id === r._id);
+    const fileHtml = files.length
+      ? files.map(file => '<button class="btn btn-ghost btn-sm" style="margin:2px" onclick="downloadAdminFile(\''+file.id+'\')">'+esc(file.original_name)+'</button>').join('')
+      : '<span style="color:#b3b8c2">없음</span>';
+    const mgrC = managerNotices.length ? '운용사 '+managerNotices.length+'개' : '<span style="color:#b3b8c2">운용사 -</span>';
+    const trC  = trusteeNotices.length ? '신탁 '+trusteeNotices.length+'개' : '<span style="color:#b3b8c2">신탁 -</span>';
     html += '<tr>'+
       '<td class="num">'+(i+1)+'</td>'+
-      '<td>'+esc(r.fundName)+'</td>'+
-      '<td>'+esc(r.assetManager||'-')+'</td>'+
-      '<td>'+esc(r.trustee||'-')+'</td>'+
-      '<td class="num">'+ (r.amount||0).toLocaleString('ko-KR') +'</td>'+
-      '<td><input class="grp" value="'+esc(r._group)+'" oninput="updateGroup(\''+r._id+'\', this.value)"></td>'+
+      '<td>'+esc(managers||'-')+'</td>'+
+      '<td class="num">'+quotas.length+'</td>'+
+      '<td class="num">'+funds.length+'</td>'+
+      '<td class="num">'+total.toLocaleString('ko-KR')+'</td>'+
+      '<td style="min-width:170px">'+fileHtml+'</td>'+
       '<td style="font-size:12px;line-height:1.5">'+mgrC+'<br>'+trC+'</td>'+
       '<td><button class="btn btn-danger btn-sm" onclick="delRec(\''+r._id+'\')">삭제</button></td>'+
     '</tr>';
@@ -543,57 +1428,191 @@ function renderSubmissions(){
   area.innerHTML = html;
 }
  
-function updateGroup(id, val){
-  const r = RECORDS.find(x=>x._id===id);
-  if (r){ 
-    r._group = val.trim() || '미지정'; 
-    store.saveRawRecords(RECORDS); // 그룹명 변경 시 즉시 로컬스토리지 저장
-    renderFinal(); 
-  }
-}
- 
-function setTradeUnit(group, val){
-  const n = Number(String(val).replace(/[^0-9.]/g,'')) || 0;
-  tradeUnitOverride[group] = n;
-  store.saveOverrides(tradeUnitOverride); // 거래단위 수정 시 즉시 로컬스토리지 저장
-  renderFinal();
-}
-
-function delRec(id) {
+async function delRec(id) {
   if(!confirm("정말 이 항목을 삭제하시겠습니까?")) return;
+  if (CENTRAL_ENABLED) {
+    await callFileFunction({ action:"admin-delete-submission-files", submissionId:id }, { admin:true });
+  }
+  SUBMISSIONS = SUBMISSIONS.filter(x => x._id !== id);
   RECORDS = RECORDS.filter(x => x._id !== id);
-  store.saveRawRecords(RECORDS);
-  loadAll();
+  await store.deleteRecord(id);
+  await loadAll();
   toast("삭제되었습니다.", "ok");
 }
 
-function resetAll() {
+async function downloadAdminFile(fileId) {
+  try {
+    const result = await callFileFunction({ action:"admin-download", fileId }, { admin:true });
+    window.open(result.url, "_blank", "noopener");
+  } catch (err) {
+    toast(err.message || "파일을 내려받지 못했습니다.", "err");
+  }
+}
+
+async function resetAll() {
+  if (CENTRAL_ENABLED) {
+    toast("중앙 저장소 모드에서는 전체 초기화 대신 개별 삭제 또는 DB 관리 화면을 사용해 주세요.", "err");
+    return;
+  }
   if(!confirm("모든 데이터가 삭제되며 복구할 수 없습니다. 전체 초기화하시겠습니까?")) return;
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(OVERRIDE_KEY);
-  loadAll();
+  await store.resetAll();
+  await loadAll();
   toast("전체 초기화 완료", "ok");
+}
+
+function setInputDisabled(disabled) {
+  document.querySelectorAll('#panel-input input, #panel-input button').forEach(el => {
+    el.disabled = disabled;
+  });
+}
+
+function fillForm(data) {
+  if (!data) return;
+  const payload = data.payload || data;
+  QUOTAS = normalizeQuotas(payload).map(quota => newQuota(quota));
+  MANAGER_NOTICES = normalizeManagerNotices(payload);
+  TRUSTEE_NOTICES = normalizeTrusteeNotices(payload);
+  SEAL_PAGES = normalizeSealPages(payload);
+  if (!MANAGER_NOTICES.length) MANAGER_NOTICES = [newNotice()];
+  if (!SEAL_PAGES.length) SEAL_PAGES = [newSealPage()];
+  renderQuotaEditor();
+  renderNoticeEditors();
+  renderSealPageEditor();
+}
+
+function renderInvestorAccess() {
+  const gate = document.getElementById('investorGate');
+  const gateText = document.getElementById('investorGateText');
+  if (!CENTRAL_ENABLED) {
+    gate.classList.remove('hidden');
+    gateText.textContent = '현재는 로컬 시연 모드입니다. Supabase 설정값을 넣으면 투자자별 고유 링크로만 제출할 수 있습니다.';
+    setInputDisabled(false);
+    return;
+  }
+  if (ADMIN_MODE) {
+    gate.classList.add('hidden');
+    setInputDisabled(true);
+    return;
+  }
+  if (APP_CONFIG.requireInvestorToken && !INVESTOR_TOKEN) {
+    gate.classList.remove('hidden');
+    gateText.textContent = '투자자별로 발급된 고유 링크가 없어서 입력 화면이 잠겨 있습니다. 우리 측에서 전달한 링크로 다시 접속해 주세요.';
+    setInputDisabled(true);
+    return;
+  }
+  gate.classList.remove('hidden');
+  gateText.textContent = '고유 링크가 확인되었습니다. 입력 후 제출하면 우리 측 중앙 집계 화면에 반영됩니다.';
+  setInputDisabled(false);
+}
+
+function renderAdminAccess() {
+  const warn = document.getElementById('storageWarn');
+  const loginCard = document.getElementById('adminLoginCard');
+  const adminContent = document.getElementById('adminContent');
+  const loginHint = document.getElementById('adminLoginHint');
+  if (!CENTRAL_ENABLED) {
+    warn.className = 'storage-warn';
+    warn.textContent = '브라우저 로컬 저장소(LocalStorage) 모드로 동작 중입니다. 중앙 저장소 설정 전에는 배포된 투자자 데이터가 서로 취합되지 않습니다.';
+    loginHint.textContent = 'Supabase 설정 후 사용 가능합니다.';
+    loginCard.classList.add('hidden');
+    adminContent.classList.remove('hidden');
+    return;
+  }
+  if (CURRENT_USER) {
+    warn.className = 'storage-warn secure';
+    warn.textContent = '중앙 저장소 모드입니다. 관리자 권한이 확인된 계정에만 최종 집계 데이터가 표시됩니다.';
+    loginCard.classList.add('hidden');
+    adminContent.classList.remove('hidden');
+  } else {
+    warn.className = 'storage-warn err';
+    warn.textContent = '관리자 로그인이 필요합니다. 로그인 전에는 제출 데이터와 최종 집계표를 불러오지 않습니다.';
+    loginHint.textContent = 'Supabase Authentication에 등록하고 admin_users에 추가한 관리자 계정으로 로그인해 주세요.';
+    loginCard.classList.remove('hidden');
+    adminContent.classList.add('hidden');
+  }
+}
+
+async function adminLogin() {
+  if (!CENTRAL_ENABLED) {
+    toast('Supabase 설정값을 먼저 입력해 주세요.', 'err');
+    return;
+  }
+  const email = document.getElementById('adminEmail').value.trim();
+  const password = document.getElementById('adminPassword').value;
+  if (!email || !password) {
+    toast('관리자 이메일과 비밀번호를 입력해 주세요.', 'err');
+    return;
+  }
+  try {
+    const client = getSupabase();
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    CURRENT_USER = data.user;
+    renderAdminAccess();
+    await loadDeals();
+    await loadAll();
+    toast('관리자 로그인이 완료되었습니다.', 'ok');
+  } catch (err) {
+    toast(err.message || '로그인에 실패했습니다.', 'err');
+  }
+}
+
+async function restoreAdminSession() {
+  if (!CENTRAL_ENABLED) return;
+  const client = getSupabase();
+  if (!client) return;
+  const { data } = await client.auth.getUser();
+  CURRENT_USER = data && data.user ? data.user : null;
 }
  
 function buildGroups(){
-  const order = [];
+  const groups = [];
   const map = {};
-  RECORDS.forEach(r=>{
-    const g = r._group || '미지정';
-    if (!map[g]){ map[g] = []; order.push(g); }
-    map[g].push(r);
+  RECORDS.forEach((row, sourceIndex) => {
+    if (!map[row._quotaKey]) {
+      map[row._quotaKey] = {
+        name: row._quotaKey,
+        rows: [],
+        quotaUnit: parseAmount(row.quotaUnit),
+        quotaCount: Number(row.quotaCount) || 0,
+        total: 0,
+        mgr: row.assetManager || '미지정',
+        submittedAt: Number(row._ts) || 0,
+        sourceIndex
+      };
+      groups.push(map[row._quotaKey]);
+    }
+    map[row._quotaKey].rows.push(row);
+    map[row._quotaKey].total += parseAmount(row.amount);
   });
-  let groups = order.map(g=>({
-    name: g,
-    rows: map[g],
-    total: map[g].reduce((s,r)=>s+(r.amount||0),0),
-    mgr: map[g][0].assetManager || map[g][0].trustee || map[g][0].fundName || '미지정'
-  }));
-  const mgrOrder = [], byMgr = {};
-  groups.forEach(gr=>{ if(!byMgr[gr.mgr]){ byMgr[gr.mgr]=[]; mgrOrder.push(gr.mgr);} byMgr[gr.mgr].push(gr); });
-  const ordered = [];
-  mgrOrder.forEach(m => byMgr[m].forEach(gr => ordered.push(gr)));
-  return ordered;
+
+  const managerOrder = Object.create(null);
+  groups.forEach(group => {
+    if (!managerOrder[group.mgr]) {
+      managerOrder[group.mgr] = {
+        firstSubmittedAt: group.submittedAt,
+        firstSourceIndex: group.sourceIndex
+      };
+      return;
+    }
+    managerOrder[group.mgr].firstSubmittedAt = Math.min(
+      managerOrder[group.mgr].firstSubmittedAt,
+      group.submittedAt
+    );
+    managerOrder[group.mgr].firstSourceIndex = Math.min(
+      managerOrder[group.mgr].firstSourceIndex,
+      group.sourceIndex
+    );
+  });
+
+  return groups.sort((a, b) => {
+    const managerA = managerOrder[a.mgr];
+    const managerB = managerOrder[b.mgr];
+    return managerA.firstSubmittedAt - managerB.firstSubmittedAt
+      || managerA.firstSourceIndex - managerB.firstSourceIndex
+      || a.submittedAt - b.submittedAt
+      || a.sourceIndex - b.sourceIndex;
+  });
 }
  
 function renderFinal(){
@@ -603,24 +1622,33 @@ function renderFinal(){
   const groups = buildGroups();
  
   let html = '<table class="final"><thead><tr>'+
-    '<th>본건<br>펀드</th><th>집합투자기구</th><th>집합투자업자</th><th>신탁업자</th><th>기준</th>'+
+    '<th>구분</th><th>집합투자기구</th><th>집합투자업자</th><th>신탁업자</th><th>기준</th>'+
     '<th>금액</th><th>거래단위</th><th>쿼터</th><th>금액(한글)</th><th>거래단위(한글)</th>'+
     '</tr></thead><tbody>';
  
-  let idx = 0, grandAmt = 0, grandQuota = 0;
+  let idx = 0, grandAmt = 0, grandQuota = 0, grandQuotaAmount = 0;
+  const managerTones = Object.create(null);
+  let managerToneCount = 0;
   groups.forEach((grp, gi)=>{
-    const band = gi % 2 === 1 ? ' b1' : ' b0';
-    const tu = (grp.name in tradeUnitOverride) ? tradeUnitOverride[grp.name] : grp.total;
-    const quotaRaw = tu > 0 ? grp.total / tu : 0;
-    const quota = Math.round(quotaRaw);
-    const isInt = tu > 0 && Math.abs(quotaRaw - quota) < 1e-9;
-    grandQuota += (isInt ? quota : 0);
+    if (managerTones[grp.mgr] === undefined) {
+      managerTones[grp.mgr] = managerToneCount % 6;
+      managerToneCount++;
+    }
+    const band = ' mgr' + managerTones[grp.mgr];
+    const managerStart = gi === 0 || groups[gi - 1].mgr !== grp.mgr;
+    const tu = grp.quotaUnit;
+    const quota = grp.quotaCount;
+    const expected = tu * quota;
+    const isMatch = grp.total === expected;
+    grandQuota += quota;
+    grandQuotaAmount += expected;
  
     grp.rows.forEach((r, j)=>{
       idx++; grandAmt += (r.amount||0);
-      const basis = (r.trustee ? r.trustee : '') + '(본건 펀드 ' + idx + '의 신탁업자 지위에서)';
-      html += '<tr class="grpRow'+band+(j===0?' grpTop':'')+'">'+
-        '<td class="k">본건 펀드 '+idx+'</td>'+
+      const fundLabel = '본건 펀드 ' + idx;
+      const basis = (r.trustee ? r.trustee : '') + '(' + fundLabel + '의 신탁업자 지위에서)';
+      html += '<tr class="grpRow'+band+(j===0?' grpTop':'')+(managerStart && j===0?' mgrStart':'')+'">'+
+        '<td class="k">'+fundLabel+'</td>'+
         '<td>'+esc(r.fundName)+'</td>'+
         '<td>'+esc(r.assetManager||'-')+'</td>'+
         '<td>'+esc(r.trustee||'-')+'</td>'+
@@ -628,8 +1656,8 @@ function renderFinal(){
         '<td class="num">'+(r.amount||0).toLocaleString('ko-KR')+'</td>';
       if (j === 0){
         const rs = ' rowspan="'+grp.rows.length+'"';
-        html += '<td class="num merge"'+rs+'><input class="tu" value="'+tu.toLocaleString('ko-KR')+'" onchange="setTradeUnit(\''+escAttr(grp.name)+'\', this.value)"></td>'+
-                '<td class="grp merge'+(isInt?'':' bad')+'"'+rs+'>'+(isInt? quota : '오류')+'</td>';
+        html += '<td class="num merge"'+rs+'>'+tu.toLocaleString('ko-KR')+'</td>'+
+                '<td class="grp merge'+(isMatch?'':' bad')+'"'+rs+'>'+quota+(isMatch?'':' (금액 불일치)')+'</td>';
       }
       html += '<td class="han">'+koreanAmount(r.amount||0)+'</td>';
       if (j === 0){
@@ -643,10 +1671,10 @@ function renderFinal(){
   html += '<tr class="sum">'+
     '<td colspan="5" style="text-align:right">합계</td>'+
     '<td class="num">'+grandAmt.toLocaleString('ko-KR')+'</td>'+
-    '<td class="num">'+grandAmt.toLocaleString('ko-KR')+'</td>'+
+    '<td class="num">'+grandQuotaAmount.toLocaleString('ko-KR')+'</td>'+
     '<td class="num">'+grandQuota+'</td>'+
     '<td class="han">'+koreanAmount(grandAmt)+'</td>'+
-    '<td class="han">'+koreanAmount(grandAmt)+'</td>'+
+    '<td class="han">'+koreanAmount(grandQuotaAmount)+'</td>'+
   '</tr>';
   html += '</tbody></table>';
   document.getElementById('finalTable').innerHTML = html;
@@ -655,23 +1683,27 @@ function renderFinal(){
 /* ---------- 통지처 목록 ---------- */
 function buildNoticeRows(){
   const rows = [];
-  RECORDS.forEach(r=>{
-    if (r.assetManager || r.mgrContact){
+  SUBMISSIONS.forEach(submission => {
+    const funds = normalizeQuotas(submission).flatMap(quota => quota.funds);
+    const firstFund = funds[0] || {};
+    normalizeManagerNotices(submission).forEach(notice => {
+      const matched = funds.find(fund => fund.fundName === notice.targetFund) || firstFund;
       rows.push({
-        fund: r.fundName,
+        fund: notice.targetFund || matched.fundName || '',
         capacity: '집합투자업자 지위',
-        entity: (r.assetManager||'') + (r.assetManager ? '(집합투자업자 지위에서)' : ''),
-        contact: r.mgrContact||'', addr: r.mgrAddr||'', phone: r.mgrPhone||'', email: r.mgrEmail||''
+        entity: (matched.assetManager || '') + (matched.assetManager ? '(집합투자업자 지위에서)' : ''),
+        contact:notice.contact || '', addr:notice.addr || '', phone:notice.phone || '', email:notice.email || ''
       });
-    }
-    if (r.trustee && (r.trContact || r.trEmail || r.trPhone || r.trAddr)){
+    });
+    normalizeTrusteeNotices(submission).forEach(notice => {
+      const matched = funds.find(fund => fund.fundName === notice.targetFund) || firstFund;
       rows.push({
-        fund: r.fundName,
+        fund: notice.targetFund || matched.fundName || '',
         capacity: '신탁업자 지위',
-        entity: r.trustee + '(신탁업자 지위에서)',
-        contact: r.trContact||'', addr: r.trAddr||'', phone: r.trPhone||'', email: r.trEmail||''
+        entity: (matched.trustee || '') + (matched.trustee ? '(신탁업자 지위에서)' : ''),
+        contact:notice.contact || '', addr:notice.addr || '', phone:notice.phone || '', email:notice.email || ''
       });
-    }
+    });
   });
   return rows;
 }
@@ -682,7 +1714,7 @@ function renderNotices(){
   if (!rows.length){ card.style.display='none'; return; }
   card.style.display='block';
   let html = '<table class="final"><thead><tr>'+
-    '<th>인수인(펀드명)</th><th>지위</th><th>통지 대상</th><th>담당자 이름·직책</th><th>주소</th><th>전화번호</th><th>이메일</th>'+
+    '<th>투자자(펀드명)</th><th>지위</th><th>통지 대상</th><th>담당자 이름·직책</th><th>주소</th><th>전화번호</th><th>이메일</th>'+
     '</tr></thead><tbody>';
   rows.forEach((n, i)=>{
     const band = i % 2 === 1 ? ' b1' : ' b0';
@@ -706,20 +1738,30 @@ function renderNotices(){
 /* ---------- 날인 페이지 목록 ---------- */
 function renderSeal(){
   const card = document.getElementById('sealCard');
-  if (!RECORDS.length){ card.style.display='none'; return; }
+  const rows = [];
+  SUBMISSIONS.forEach(submission => {
+    const funds = normalizeQuotas(submission).flatMap(quota => quota.funds);
+    const firstFund = funds[0] || {};
+    normalizeSealPages(submission).forEach(page => {
+      const matched = funds.find(fund => fund.fundName === page.targetFund) || firstFund;
+      rows.push({
+        name:page.sealName || page.targetFund || matched.fundName || '',
+        addr:page.sealAddr || matched.address || '',
+        ceo:page.ceoName || ''
+      });
+    });
+  });
+  if (!rows.length){ card.style.display='none'; return; }
   card.style.display='block';
   let html = '<table class="final"><thead><tr>'+
-    '<th>인수인 명칭 (날인용)</th><th>주소</th><th>대표이사 (또는 업무집행조합원)</th>'+
+    '<th>투자자 명칭 (날인용)</th><th>주소</th><th>대표이사 (또는 업무집행조합원)</th>'+
     '</tr></thead><tbody>';
-  RECORDS.forEach((r, i)=>{
+  rows.forEach((row, i)=>{
     const band = i % 2 === 1 ? ' b1' : ' b0';
-    const name = r.sealName || r.fundName;
-    const addr = r.sealAddr || r.address || '-';
-    const ceo = r.ceoName || '-';
     html += '<tr class="'+band+'">'+
-      '<td style="font-weight:700">'+esc(name)+'</td>'+
-      '<td>'+esc(addr)+'</td>'+
-      '<td>'+esc(ceo)+'</td>'+
+      '<td style="font-weight:700">'+esc(row.name || '-')+'</td>'+
+      '<td>'+esc(row.addr || '-')+'</td>'+
+      '<td>'+esc(row.ceo || '-')+'</td>'+
     '</tr>';
   });
   html += '</tbody></table>';
@@ -743,15 +1785,16 @@ function copyTextToClipboard(text) {
 
 function copyTSV(){
   const groups = buildGroups();
-  let tsv = "본건 펀드\t집합투자기구\t집합투자업자\t신탁업자\t기준\t금액\t거래단위\t쿼터\t금액(한글)\t거래단위(한글)\n";
+  let tsv = "구분\t집합투자기구\t집합투자업자\t신탁업자\t기준\t금액\t거래단위\t쿼터\t금액(한글)\t거래단위(한글)\n";
   let idx = 0;
   groups.forEach(grp=>{
-    const tu = (grp.name in tradeUnitOverride) ? tradeUnitOverride[grp.name] : grp.total;
-    const quota = Math.round(tu > 0 ? grp.total / tu : 0);
+    const tu = grp.quotaUnit;
+    const quota = grp.quotaCount;
     grp.rows.forEach((r, j)=>{
       idx++;
-      const basis = (r.trustee ? r.trustee : '') + '(본건 펀드 ' + idx + '의 신탁업자 지위에서)';
-      tsv += `본건 펀드 ${idx}\t${r.fundName||''}\t${r.assetManager||''}\t${r.trustee||''}\t${basis}\t${r.amount||0}\t${j===0?tu:''}\t${j===0?quota:''}\t${koreanAmount(r.amount||0)}\t${j===0?koreanAmount(tu):''}\n`;
+      const fundLabel = `본건 펀드 ${idx}`;
+      const basis = (r.trustee ? r.trustee : '') + '(' + fundLabel + '의 신탁업자 지위에서)';
+      tsv += `${fundLabel}\t${r.fundName||''}\t${r.assetManager||''}\t${r.trustee||''}\t${basis}\t${r.amount||0}\t${j===0?tu:''}\t${j===0?quota:''}\t${koreanAmount(r.amount||0)}\t${j===0?koreanAmount(tu):''}\n`;
     });
   });
   copyTextToClipboard(tsv);
@@ -759,7 +1802,7 @@ function copyTSV(){
 
 function copyNoticeTSV(){
   const rows = buildNoticeRows();
-  let tsv = "인수인(펀드명)\t지위\t통지 대상\t담당자 이름·직책\t주소\t전화번호\t이메일\n";
+  let tsv = "투자자(펀드명)\t지위\t통지 대상\t담당자 이름·직책\t주소\t전화번호\t이메일\n";
   rows.forEach(n=>{
     tsv += `${n.fund}\t${n.capacity}\t${n.entity}\t${n.contact}\t${n.addr}\t${n.phone}\t${n.email}\n`;
   });
@@ -767,26 +1810,105 @@ function copyNoticeTSV(){
 }
 
 function copySealTSV(){
-  let tsv = "인수인 명칭 (날인용)\t주소\t대표이사 (또는 업무집행조합원)\n";
-  RECORDS.forEach(r=>{
-    tsv += `${r.sealName || r.fundName}\t${r.sealAddr || r.address || ''}\t${r.ceoName || ''}\n`;
+  let tsv = "투자자 명칭 (날인용)\t주소\t대표이사 (또는 업무집행조합원)\n";
+  SUBMISSIONS.forEach(submission => {
+    const funds = normalizeQuotas(submission).flatMap(quota => quota.funds);
+    const firstFund = funds[0] || {};
+    normalizeSealPages(submission).forEach(page => {
+      const matched = funds.find(fund => fund.fundName === page.targetFund) || firstFund;
+      tsv += `${page.sealName || page.targetFund || matched.fundName || ''}\t${page.sealAddr || matched.address || ''}\t${page.ceoName || ''}\n`;
+    });
   });
   copyTextToClipboard(tsv);
 }
 
 /* ---------- 샘플 데이터 채우기 ---------- */
-function seedSample(){
+async function seedSample(){
+  if (CENTRAL_ENABLED) {
+    toast('샘플 데이터는 로컬 시연 모드에서만 사용할 수 있습니다.', 'err');
+    return;
+  }
   const samples = [
-    { fundName: "이현 코스닥벤처 일반 사모증권 투자신탁 제5호", assetManager: "주식회사 이현자산운용", trustee: "한국투자증권 주식회사", amount: 2400000000, bondBroker: "한국투자증권", brokerAcct: "110-223-455", ksdCode: "202420A00015", custFund: "A0151", custDep: "3-0269-03", bizNo: "290-87-01506", address: "서울시 강남구 테헤란로 10", mgrContact: "조영주 운용역", mgrPhone: "02-748-8927", mgrEmail: "yj.cho@ihyun.com", mgrAddr: "여의도 파크원 5층", trContact: "홍시연 과장", trPhone: "02-2020-7229", trEmail: "pbs@koreainvest.com", trAddr: "여의도 한투빌딩", sealName: "", sealAddr: "", ceoName: "김성환 (한국투자증권)" },
-    { fundName: "파인브릿지 Mezzanine 전문투자형 사모신탁 1호", assetManager: "파인브릿지자산운용", trustee: "국민은행 주식회사", amount: 1500000000, bondBroker: "한국투자증권", brokerAcct: "220-445-112", ksdCode: "202510B00022", custFund: "B0221", custDep: "3-9999-01", bizNo: "120-81-99823", address: "서울시 영등포구 여의도동 22", mgrContact: "김우진 팀장", mgrPhone: "02-3770-1123", mgrEmail: "wj.kim@pinebridge.com", mgrAddr: "여의도 IFC 30층", trContact: "박상면 대리", trPhone: "02-2073-1142", trEmail: "trust.kb@kbstar.com", trAddr: "여의도 국민은행", sealName: "", sealAddr: "", ceoName: "이재근 (국민은행)" }
+    {
+      quotas: [{
+        quotaUnit: 2000000000,
+        quotaCount: 2,
+        funds: [
+          { fundName: "샘플 펀드 A-1", assetManager: "샘플 운용사 A", trustee: "샘플 신탁업자 A", amount: 2500000000, bondBroker: "샘플 금융기관 A", brokerAcct: "110-223-455", ksdCode: "202420A00015", custFund: "A0151", custDep: "3-0269-03", bizNo: "000-00-00000", address: "서울특별시 중구 샘플로 10" },
+          { fundName: "샘플 펀드 A-2", assetManager: "샘플 운용사 A", trustee: "샘플 신탁업자 A", amount: 1500000000, bondBroker: "샘플 금융기관 A", brokerAcct: "110-223-456", ksdCode: "202420A00016", custFund: "A0152", custDep: "3-0269-04", bizNo: "000-00-00001", address: "서울특별시 중구 샘플로 10" }
+        ]
+      }],
+      managerNotices: [
+        { targetFund:"샘플 펀드 A-1", contact:"담당자 A", phone:"02-0000-0000", email:"manager.a@example.com", addr:"서울특별시 중구 샘플로 10" },
+        { targetFund:"샘플 펀드 A-2", contact:"담당자 A", phone:"02-0000-0000", email:"manager.a@example.com", addr:"서울특별시 중구 샘플로 10" }
+      ],
+      trusteeNotices: [
+        { targetFund:"샘플 펀드 A-1", contact:"담당자 B", phone:"02-0000-0001", email:"trustee.a@example.com", addr:"서울특별시 중구 샘플로 20" }
+      ],
+      sealPages: [
+        { targetFund:"샘플 펀드 A-1", sealName:"", sealAddr:"", ceoName:"대표자 A" },
+        { targetFund:"샘플 펀드 A-2", sealName:"", sealAddr:"", ceoName:"대표자 A" }
+      ],
+      _id: "sample_a", _ts: Date.now()
+    },
+    {
+      quotas: [
+        { quotaUnit: 1000000000, quotaCount: 1, funds: [{ fundName: "샘플 펀드 B-1", assetManager: "샘플 운용사 B", trustee: "샘플 신탁업자 B", amount: 1000000000 }] },
+        { quotaUnit: 500000000, quotaCount: 1, funds: [{ fundName: "샘플 펀드 B-2", assetManager: "샘플 운용사 B", trustee: "샘플 신탁업자 B", amount: 500000000 }] }
+      ],
+      managerNotices: [
+        { targetFund:"샘플 펀드 B-1", contact:"담당자 C", phone:"02-0000-0002", email:"manager.b@example.com", addr:"서울특별시 영등포구 샘플로 22" },
+        { targetFund:"샘플 펀드 B-2", contact:"담당자 C", phone:"02-0000-0002", email:"manager.b@example.com", addr:"서울특별시 영등포구 샘플로 22" }
+      ],
+      trusteeNotices: [
+        { targetFund:"샘플 펀드 B-1", contact:"담당자 D", phone:"02-0000-0003", email:"trustee.b@example.com", addr:"서울특별시 영등포구 샘플로 30" }
+      ],
+      sealPages: [
+        { targetFund:"샘플 펀드 B-1", sealName:"", sealAddr:"", ceoName:"대표자 B" }
+      ],
+      _id: "sample_b", _ts: Date.now() + 1
+    }
   ];
-  store.saveRawRecords(samples);
-  loadAll();
+  await store.saveRawRecords(samples);
+  await loadAll();
   toast("샘플 데이터 2건이 로컬에 로드되었습니다.", "ok");
 }
 
 // 초기 로드
-window.onload = function() {
-  refreshCount();
+window.onload = async function() {
+  QUOTAS = [newQuota()];
+  MANAGER_NOTICES = [newNotice()];
+  TRUSTEE_NOTICES = [];
+  SEAL_PAGES = [newSealPage()];
+  renderQuotaEditor();
+  renderNoticeEditors();
+  renderSealPageEditor();
+  if (CENTRAL_ENABLED && !ADMIN_MODE) {
+    document.getElementById('tab-admin').classList.add('hidden');
+  }
+  renderInvestorAccess();
+  await restoreAdminSession();
+  renderAdminAccess();
+  if (CENTRAL_ENABLED && INVESTOR_TOKEN) {
+    try {
+      const existing = await store.loadInvestorDraft();
+      if (existing) fillForm(existing);
+    } catch (err) {
+      document.getElementById('investorGate').classList.remove('hidden');
+      document.getElementById('investorGateText').textContent = err.message || '고유 링크 확인 중 오류가 발생했습니다.';
+      setInputDisabled(true);
+    }
+    try {
+      await loadInvestorFiles();
+    } catch (fileError) {
+      document.getElementById("uploadStatus").textContent = "첨부파일 기능이 아직 연결되지 않았습니다.";
+    }
+  }
+  if (ADMIN_MODE) {
+    if (CURRENT_USER) await loadDeals();
+    await switchTab('admin');
+  } else {
+    await refreshCount();
+  }
 };
 </script>
